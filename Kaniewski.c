@@ -85,7 +85,7 @@ void show_tab(char tab[WYS][SZER])
       printf("%c",'|');
   }
 }
-void spalanie(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER])
+void spalanie(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER], char wiatr)
 {
   int i,j,k,l;
   for(i=0; i<WYS; i++)
@@ -98,8 +98,32 @@ void spalanie(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER])
            else licznik[i][j]++;
            for(k=-1; k<2; k++){
               for(l=-1; l<2; l++){
+              int p1=i+k;
+              int p2=j+l;
+
+                if(i==0 && k==-1) p1=0; //pierwszy wiersz
+                if(j==0 && l==-1)    p2=0; // pierwsza kolumna
+                if(i==WYS-1 && k==1) p1=WYS-1; // ostatni wiersz
+                if(j==SZER-1 && l==1) p2=SZER-1;// ostatnia kolumna
+
+                if(i==0 && j==0){ //lewy gorny rog
+                    if(k==-1) p1=0;
+                    if(l==-1) p2=0;
+                }
+                if(i==0 && j==SZER){ //prawy gorny rog
+                    if(k==-1) p1=0;
+                    if(l==1) p2=SZER;
+                }
+                if(i==WYS && j==0){ //lewy dolny rog
+                    if(k==1) p1=WYS;
+                    if(l==-1) p2=0;;
+                }
+                if(i==WYS && j==SZER){//prawy dolny rog
+                    if(k==1) p1=WYS;
+                    if(l==1) p2=SZER;
+                }
                   if(!(k==0 && l==0)){
-                      if(tab[i+k][j+l]=='T') tab2[i+k][j+l]='#';
+                      if(tab[p1][p2]=='T') tab2[p1][p2]='#';
                   }
               }
             }
@@ -137,6 +161,7 @@ int main()
   int x=0,y=0;
   int i,j;
   char znak=0;
+  char wiatr=0;
   char tab[WYS][SZER];
   char tab2[WYS][SZER];
   int licznik[WYS][SZER];
@@ -153,10 +178,13 @@ int main()
   scanf("%d",&x);
   printf("\nY:");
   scanf("%d",&y);
+  printf("\nWprowadz kierunek wiatru N,E,S,W i Z - brak wiatru"); // N - Góra, S - Dół, E - Prawo , W - Lewo
+  scanf("%c",&wiatr);
   miejsce_podpalenia(tab,x,y);
   tab_cpy(tab,tab2);
 //wersja manualne odświezanie
-/*  do
+/*
+  do
   {
       system("cls");
     show_tab(tab2);
@@ -170,8 +198,10 @@ do
   {
       system("cls");
     show_tab(tab2);
-    spalanie(tab,tab2,licznik);
+    spalanie(tab,tab2,licznik,wiatr);
     Sleep(100);
    }while(1);
+
+
 
 }
