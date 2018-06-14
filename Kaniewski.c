@@ -13,6 +13,7 @@
   3.[x] Drzewo zacznie się palić jeśli conajmniej jeden sąsiad płonie,
   4.[x] Płonąca komórka zmienia się w pustą,
   5.[ ] Rozchodzenie się ognia od podania kierunku wiatru.
+      a)np. wiatr wieje z Wschodu <-- czyli w lewo to ogień rozchodzi się 3 razy szybciej w lewo niż w innych kierunkach.
   6.[ ] Możliwość wprowadzenia opadów deszczu
 */
 
@@ -94,7 +95,7 @@ void spalanie(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER],
       {
         if(tab[i][j]=='#')
         { //kończenie spalania drzewa  tab[WYS][SZER]
-           if(licznik[i][j]==2) tab2[i][j]=' ';
+           if(licznik[i][j]==2) tab2[i][j]='0';
            else licznik[i][j]++;
            for(k=-1; k<2; k++){
               for(l=-1; l<2; l++){
@@ -122,9 +123,14 @@ void spalanie(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER],
                     if(k==1) p1=WYS;
                     if(l==1) p2=SZER;
                 }
-                  if(!(k==0 && l==0)){
+                if(wiatr=='W')
+                {
+                  if(tab[i][j-2]=='T')    tab2[i][j-2]='#';
+                }
+                  if(!(k==0 && l==0) && wiatr=='W'){
                       if(tab[p1][p2]=='T') tab2[p1][p2]='#';
-                  }
+                        if(tab[p1-1][p2]=='T') tab2[p1-1][p2]='#';
+                }
               }
             }
         /*
@@ -172,14 +178,14 @@ int main()
 
   zalesianie(tab);
   show_tab(tab);
-
+  printf("\nWprowadz kierunek wiatru N,E,S,W i Z - brak wiatru: "); // N - z Góry na Dół, S - z Dołu w Górę , E - W Lewo , W - w Prawo
+  scanf("%c", &wiatr);
   printf("\n\nWprowadz wspolrzedne podpalenia:");
   printf("\nX:");
   scanf("%d",&x);
   printf("\nY:");
   scanf("%d",&y);
-  printf("\nWprowadz kierunek wiatru N,E,S,W i Z - brak wiatru"); // N - Góra, S - Dół, E - Prawo , W - Lewo
-  scanf("%c",&wiatr);
+
   miejsce_podpalenia(tab,x,y);
   tab_cpy(tab,tab2);
 //wersja manualne odświezanie
