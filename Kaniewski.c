@@ -1,5 +1,5 @@
 /*===============================================
-  AUTOMAT KOMÓRKOWY - "Symulator pożaru lasu"
+  AUTOMAT KOMÓRKOWY - "Symulator pożaru lasu" do 17.06.2018
 -----------------------------------------------
   Damian Kaniewski 291565 UMK IS r1 s2
 ===============================================
@@ -12,8 +12,8 @@
   2.[x] Wybieramy współrzędne gdzie ma zacząć rozprzestrzeniać się płomień,
   3.[x] Drzewo zacznie się palić jeśli conajmniej jeden sąsiad płonie,
   4.[x] Płonąca komórka zmienia się w pustą,
-  5.[ ] Opcjonalnie rozchodzenie się ognia od podania kierunku wiatru.
-
+  5.[ ] Rozchodzenie się ognia od podania kierunku wiatru.
+  6.[ ] Możliwość wprowadzenia opadów deszczu
 */
 
 #include <stdio.h>
@@ -60,11 +60,13 @@ void show_tab(char tab[WYS][SZER])
   for(i=0; i<=SZER+1; i++)
   {
     if(i==0)
-      printf("%c",'|' );
-    else if(i==SZER+1)
       printf("%c",'|');
-    else
+    else{
+      if(i==SZER+1)
       printf("%c",'|');
+      else
+      printf("%c",'|');
+      }
   }
     printf("\n");
   for(i=0; i<WYS; i++)
@@ -85,17 +87,23 @@ void show_tab(char tab[WYS][SZER])
 }
 void spalanie(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER])
 {
-  int i,j;
+  int i,j,k,l;
   for(i=0; i<WYS; i++)
   {
       for(j=0; j<SZER; j++)
       {
         if(tab[i][j]=='#')
-        {
-           //kończenie spalania drzewa
+        { //kończenie spalania drzewa  tab[WYS][SZER]
            if(licznik[i][j]==2) tab2[i][j]=' ';
            else licznik[i][j]++;
-           //pod
+           for(k=-1; k<2; k++){
+              for(l=-1; l<2; l++){
+                  if(!(k==0 && l==0)){
+                      if(tab[i+k][j+l]=='T') tab2[i+k][j+l]='#';
+                  }
+              }
+            }
+        /*
            if(tab[i+1][j]=='T')    tab2[i+1][j]='#';
            //nad
            if(tab[i-1][j]=='T')    tab2[i-1][j]='#';
@@ -103,25 +111,28 @@ void spalanie(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER])
            if(tab[i][j-1]=='T')    tab2[i][j-1]='#';
            //prawo
            if(tab[i][j+1]=='T')    tab2[i][j+1]='#';
-           //pod lewo
+           // doł lewo
            if(tab[i+1][j-1]=='T')  tab2[i+1][j-1]='#';
-           //nad lewo
-           if(tab[i-1][j-1]=='T')  tab2[i-1][j-1]='#';
-           //pod lewo
+           // dol prawo
            if(tab[i-1][j+1]=='T')  tab2[i-1][j+1]='#';
-           //nad lewo
-           if(tab[i+1][j+1]=='T')  tab2[i+1][j+1]='#';
+           //gora lewo
+           if(tab[i-1][j-1]=='T')  tab2[i-1][j-1]='#';
+           //gora prawo
+           if(tab[i-1][j+1]=='T')  tab2[i-1][j+1]='#';
+          */
+
+            }
 
         }
-
       }
-    }
+      tab_cpy(tab2,tab);
+  }
 
-    tab_cpy(tab2,tab);
-}
+
 
 int main()
 {
+
   srand(time(NULL));
   int x=0,y=0;
   int i,j;
@@ -130,9 +141,9 @@ int main()
   char tab2[WYS][SZER];
   int licznik[WYS][SZER];
   //zerowanie licznika
-  for(i=0; i<WYS; i++)
-    for(j=0; j<SZER; j++)
-        licznik[i][j]=0;
+  for(i=0; i<WYS; i++){
+    for(j=0; j<SZER; j++){
+        licznik[i][j]=0;}}
 
   zalesianie(tab);
   show_tab(tab);
@@ -145,7 +156,7 @@ int main()
   miejsce_podpalenia(tab,x,y);
   tab_cpy(tab,tab2);
 //wersja manualne odświezanie
-  /*do
+/*  do
   {
       system("cls");
     show_tab(tab2);
@@ -154,11 +165,13 @@ int main()
    }while((znak=getch())!=27);
 */
 //Automatyczne odswiezanie
+
 do
   {
       system("cls");
     show_tab(tab2);
     spalanie(tab,tab2,licznik);
-    Sleep(1000);
+    Sleep(100);
    }while(1);
+
 }
