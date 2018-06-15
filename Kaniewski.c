@@ -13,7 +13,7 @@
   3.[x] Drzewo zacznie się palić jeśli conajmniej jeden sąsiad płonie,
   4.[x] Płonąca komórka zmienia się w pustą,
   5.[ ] Rozchodzenie się ognia od podania kierunku wiatru.
-      a)np. wiatr wieje z Wschodu <-- czyli w lewo to ogień rozchodzi się 3 razy szybciej w lewo niż w innych kierunkach.
+      a)np. wiatr wieje z Wschodu <-- czyli w lewo to ogień rozchodzi się 2 razy szybciej w lewo niż w innych kierunkach.
   6.[ ] Możliwość wprowadzenia opadów deszczu
 */
 
@@ -24,14 +24,28 @@
 #define WYS  20
 #define SZER  100
 
+void wiatr(char kierunek, int *w1, int *w2)
+{
+
+  if(kierunek=='W')
+  {
+    *w1=0;
+    *w2=-1;
+  }
+  if(kierunek=='E')
+  {
+
+  }
+}
+
 void miejsce_podpalenia(char tab[WYS][SZER], int x, int y)
 {
          tab[x][y]='#';
 }
 
-
 int losowanie(void)
-{ return rand()%3+1;} // Dlatego 3 bo większa gęstość drzewek
+{ return rand()%2+2;} // Dlatego 3 bo większa gęstość drzewek
+
 void zalesianie(char tab[WYS][SZER])
 {
   int i,j;
@@ -86,21 +100,23 @@ void show_tab(char tab[WYS][SZER])
       printf("%c",'|');
   }
 }
-void spalanie(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER], char wiatr)
+void spalanie(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER], char kierunek)
 {
   int i,j,k,l;
+  int w1=0, w2=0;
+
   for(i=0; i<WYS; i++)
   {
       for(j=0; j<SZER; j++)
       {
         if(tab[i][j]=='#')
         { //kończenie spalania drzewa  tab[WYS][SZER]
-           if(licznik[i][j]==2) tab2[i][j]='0';
+           if(licznik[i][j]==2) tab2[i][j]=' ';
            else licznik[i][j]++;
            for(k=-1; k<2; k++){
               for(l=-1; l<2; l++){
-              int p1=i+k;
-              int p2=j+l;
+              int p1=i+k; //WYS
+              int p2=j+l; //SZER
 
                 if(i==0 && k==-1) p1=0; //pierwszy wiersz
                 if(j==0 && l==-1)    p2=0; // pierwsza kolumna
@@ -123,13 +139,11 @@ void spalanie(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER],
                     if(k==1) p1=WYS;
                     if(l==1) p2=SZER;
                 }
-                if(wiatr=='W')
-                {
-                  if(tab[i][j-2]=='T')    tab2[i][j-2]='#';
-                }
-                  if(!(k==0 && l==0) && wiatr=='W'){
-                      if(tab[p1][p2]=='T') tab2[p1][p2]='#';
-                        if(tab[p1-1][p2]=='T') tab2[p1-1][p2]='#';
+                  wiatr(kierunek,&w1,&w2);
+
+                  if(!(k==0 && l==0)){ //tab[WYS][SZER]
+                      if(tab[p1+w1][p2+w2]=='T') tab2[p1+w1][p2+w2]='#';
+                        if(tab[p1+w1][p2+w2]=='T') tab2[p1+w1][p2+w2]='#';
                 }
               }
             }
@@ -167,7 +181,8 @@ int main()
   int x=0,y=0;
   int i,j;
   char znak=0;
-  char wiatr=0;
+  char w;
+  char kierunek='Z';
   char tab[WYS][SZER];
   char tab2[WYS][SZER];
   int licznik[WYS][SZER];
@@ -179,7 +194,8 @@ int main()
   zalesianie(tab);
   show_tab(tab);
   printf("\nWprowadz kierunek wiatru N,E,S,W i Z - brak wiatru: "); // N - z Góry na Dół, S - z Dołu w Górę , E - W Lewo , W - w Prawo
-  scanf("%c", &wiatr);
+  scanf("%c", &kierunek);
+
   printf("\n\nWprowadz wspolrzedne podpalenia:");
   printf("\nX:");
   scanf("%d",&x);
@@ -195,16 +211,16 @@ int main()
       system("cls");
     show_tab(tab2);
     spalanie(tab,tab2,licznik);
-
    }while((znak=getch())!=27);
 */
 //Automatyczne odswiezanie
 
 do
   {
-      system("cls");
+    system("cls");
     show_tab(tab2);
-    spalanie(tab,tab2,licznik,wiatr);
+    spalanie(tab,tab2,licznik,kierunek);
+
     Sleep(100);
    }while(1);
 
