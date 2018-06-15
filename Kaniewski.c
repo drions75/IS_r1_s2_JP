@@ -24,18 +24,16 @@
 #define WYS  20
 #define SZER  100
 
-void wiatr(char kierunek, int *w1, int *w2)
+void wiatr(char kierunek, int *w1, int *w2, int i, int j)
 {
+    switch(kierunek){
+        case 'W':
+            if(j<2) *w2=0;
+            else  *w2=-1;
+            *w1=0;
+        break;
 
-  if(kierunek=='W')
-  {
-    *w1=0;
-    *w2=-1;
-  }
-  if(kierunek=='E')
-  {
-
-  }
+    }
 }
 
 void miejsce_podpalenia(char tab[WYS][SZER], int x, int y)
@@ -44,7 +42,7 @@ void miejsce_podpalenia(char tab[WYS][SZER], int x, int y)
 }
 
 int losowanie(void)
-{ return rand()%2+2;} // Dlatego 3 bo większa gęstość drzewek
+{ return rand()%2+1;} // Dlatego 3 bo większa gęstość drzewek
 
 void zalesianie(char tab[WYS][SZER])
 {
@@ -139,11 +137,12 @@ void spalanie(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER],
                     if(k==1) p1=WYS;
                     if(l==1) p2=SZER;
                 }
-                  wiatr(kierunek,&w1,&w2);
-
+                wiatr(kierunek,&w1,&w2,i,j);
                   if(!(k==0 && l==0)){ //tab[WYS][SZER]
-                      if(tab[p1+w1][p2+w2]=='T') tab2[p1+w1][p2+w2]='#';
-                        if(tab[p1+w1][p2+w2]=='T') tab2[p1+w1][p2+w2]='#';
+                      if(tab[p1][p2]=='T') tab2[p1][p2]='#';
+                      if(kierunek!='Z'){
+                            if(tab[p1+w1][p2+w2]=='T') tab2[p1+w1][p2+w2]='#';
+                      }
                 }
               }
             }
@@ -202,7 +201,7 @@ int main()
   printf("\nY:");
   scanf("%d",&y);
 
-  miejsce_podpalenia(tab,x,y);
+  miejsce_podpalenia(tab,y,x);
   tab_cpy(tab,tab2);
 //wersja manualne odświezanie
 /*
