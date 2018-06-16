@@ -1,5 +1,5 @@
 /*===============================================
-  AUTOMAT KOMÓRKOWY - "Symulator pożaru lasu" do 17.06.2018
+  AUTOMAT KOMÓRKOWY - "Symulator pożaru lasu" do 19.06.2018
 -----------------------------------------------
   Damian Kaniewski 291565 UMK IS r1 s2
 ===============================================
@@ -12,30 +12,71 @@
   2.[x] Wybieramy współrzędne gdzie ma zacząć rozprzestrzeniać się płomień,
   3.[x] Drzewo zacznie się palić jeśli conajmniej jeden sąsiad płonie,
   4.[x] Płonąca komórka zmienia się w pustą,
-  5.[ ] Rozchodzenie się ognia od podania kierunku wiatru.
+  5.[x] Rozchodzenie się ognia od podania kierunku wiatru.
       a)np. wiatr wieje z Wschodu <-- czyli w lewo to ogień rozchodzi się 2 razy szybciej w lewo niż w innych kierunkach.
-  6.[ ] Możliwość wprowadzenia opadów deszczu
 */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h>
 #include <time.h>
-#define WYS  20
-#define SZER  100
+///WINDOWS///
+#ifdef _WIN32
+#include <windows.h>
+#define czysc() system("cls")
+#endif
+////////////
 
-void wiatr(char kierunek, int *w1, int *w2, int i, int j)
+///LINUX///
+#ifdef __linux__
+#include <unistd.h>
+#define czysc() system("clear")
+#define Sleep(ms) usleep((ms)*1000)
+
+#endif
+///////////
+
+#define WYS  23
+#define SZER  76
+void wiatr(char kierunek, int *w1, int *w2, int i, int j) // funkcja odpowiedzialna za implementacje rozchodzenia sie ognia wraz z kierunkiem wiatru, w1 i w2 to zmienne wskaznikowe, ktore odnosza sie do petli spalanie.
 {
+  // i wysokosc j szerokosc
+  //w1 wys , w2 szer
     switch(kierunek){
-        case 'W':
+        case 'W': // wiatr z Zachodu (wieje w lewo)
             if(j<2) *w2=0;
             else  *w2=-1;
             *w1=0;
         break;
+        case 'E': // wiatr ze Wschodu (wieje w prawo)
+            if(j>SZER-3) *w2=0;
+            else  *w2;
+            *w1=0;
+        break;
+        case 'S': // wiatr z Południa (wieje w górę)
+            if(i<2) *w1=0;
+            else  *w1=-1;
+            *w2=0;
+        break;
+        case 'N': // wiatr z Północy (wieje na dół)
+            if(i>WYS-3) *w1=0;
+            else  *w1;
+            *w2=0;
+        break;
 
     }
 }
-
+char spr_ogien(char tab[WYS][SZER])
+{
+  int i,j;
+  for(i=0; i<WYS; i++)
+  {
+      for(j=0; j<SZER; j++)
+      {
+        if(tab[i][j]=='#') return 0;
+      }
+    }
+      return 1;
+}
 void miejsce_podpalenia(char tab[WYS][SZER], int x, int y)
 {
          tab[x][y]='#';
@@ -102,7 +143,6 @@ void spalanie(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER],
 {
   int i,j,k,l;
   int w1=0, w2=0;
-
   for(i=0; i<WYS; i++)
   {
       for(j=0; j<SZER; j++)
@@ -142,45 +182,21 @@ void spalanie(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER],
                       if(tab[p1][p2]=='T') tab2[p1][p2]='#';
                       if(kierunek!='Z'){
                             if(tab[p1+w1][p2+w2]=='T') tab2[p1+w1][p2+w2]='#';
-                      }
+                  }
                 }
               }
             }
-        /*
-           if(tab[i+1][j]=='T')    tab2[i+1][j]='#';
-           //nad
-           if(tab[i-1][j]=='T')    tab2[i-1][j]='#';
-           //lewo
-           if(tab[i][j-1]=='T')    tab2[i][j-1]='#';
-           //prawo
-           if(tab[i][j+1]=='T')    tab2[i][j+1]='#';
-           // doł lewo
-           if(tab[i+1][j-1]=='T')  tab2[i+1][j-1]='#';
-           // dol prawo
-           if(tab[i-1][j+1]=='T')  tab2[i-1][j+1]='#';
-           //gora lewo
-           if(tab[i-1][j-1]=='T')  tab2[i-1][j-1]='#';
-           //gora prawo
-           if(tab[i-1][j+1]=='T')  tab2[i-1][j+1]='#';
-          */
-
-            }
-
+          }
         }
+
       }
+
       tab_cpy(tab2,tab);
   }
-
-
-
-int main()
-{
-
+int main(){
   srand(time(NULL));
-  int x=0,y=0;
-  int i,j;
-  char znak=0;
-  char w;
+  int x=0,y=0,i,j;;
+
   char kierunek='Z';
   char tab[WYS][SZER];
   char tab2[WYS][SZER];
@@ -190,8 +206,8 @@ int main()
     for(j=0; j<SZER; j++){
         licznik[i][j]=0;}}
 
-  zalesianie(tab);
-  show_tab(tab);
+  zalesianie(tab); //losowo rozmieszczane drzewa
+  show_tab(tab); //plansza
   printf("\nWprowadz kierunek wiatru N,E,S,W i Z - brak wiatru: "); // N - z Góry na Dół, S - z Dołu w Górę , E - W Lewo , W - w Prawo
   scanf("%c", &kierunek);
 
@@ -203,26 +219,17 @@ int main()
 
   miejsce_podpalenia(tab,y,x);
   tab_cpy(tab,tab2);
-//wersja manualne odświezanie
-/*
-  do
-  {
-      system("cls");
-    show_tab(tab2);
-    spalanie(tab,tab2,licznik);
-   }while((znak=getch())!=27);
-*/
-//Automatyczne odswiezanie
 
 do
   {
-    system("cls");
+    czysc();
     show_tab(tab2);
     spalanie(tab,tab2,licznik,kierunek);
 
-    Sleep(100);
-   }while(1);
-
+    Sleep(500);
+   }while(spr_ogien(tab2)!=1);
+    czysc();
+    show_tab(tab2);
 
 
 }
