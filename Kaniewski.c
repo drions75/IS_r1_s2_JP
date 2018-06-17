@@ -128,9 +128,10 @@ void show_tab(char tab[WYS][SZER]) // funkcja odpowiedzialna za zbudowanie plans
             printf("%c\n",'Y');//prawa sciana
       }
     }
-  for(i=0;i<=SZER+1;i++){ //dolna belka{
+  for(i=0;i<=SZER+1;i++){ //dolna belka
       printf("%c",'X');
   }
+    printf("\n");
 }
 void spalanie(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER], char kierunek)
 {
@@ -187,9 +188,10 @@ void spalanie(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER],
 
       tab_cpy(tab2,tab); //kopiowanie tab
 }
-void start(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER], int *x, int *y)
+void start(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER])
 {
   zerowanie_licz(licznik);
+  int x=0,y=0;
   char kierunek;
   zalesianie(tab); //losowo rozmieszczane drzewa
   show_tab(tab); //plansza
@@ -209,20 +211,20 @@ void start(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER], in
       show_tab(tab2);
       spalanie(tab,tab2,licznik,kierunek);
       Sleep(300);
-     }while(spr_ogien(tab2)!=1);
+  }while(spr_ogien(tab2)!=1);
 
     czysc();
     show_tab(tab2);
 }
 int main(){
   srand(time(NULL));
-  int  x=0,y=0,i=0,wybor=1;
+  int wybor=1;
   char tab[WYS][SZER];
   char tab2[WYS][SZER];
   int licznik[WYS][SZER];
 
   while(wybor!=2){
-      start(tab,tab2,licznik,&x,&y);
+      start(tab,tab2,licznik);
       printf("\nCzy chcesz zaczac od nowa? (1)-TAK (2)-NIE : ");
       scanf("%d",&wybor);
       if(wybor==1) czysc();
