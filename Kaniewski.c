@@ -92,7 +92,7 @@ void zalesianie(char tab[WYS][SZER]) // funkcja ktora wypelnia plansze drzewami 
   int i,j;
   for(i=0; i<WYS; i++){
       for(j=0; j<SZER; j++){
-        if(losowanie()==10) tab[i][j]=' '; // jezeli parzysta to pole jest puste
+        if(losowanie()==1) tab[i][j]=' '; // jezeli parzysta to pole jest puste
         else   tab[i][j]='T'; //jezeli nieparzysta to rosnie drzewo
     }
   }
@@ -128,8 +128,8 @@ void show_tab(char tab[WYS][SZER]) // funkcja odpowiedzialna za zbudowanie plans
             printf("%c\n",'Y');//prawa sciana
       }
     }
-  for(i=0;i<=SZER+1;i++) //dolna belka{
-    printf("%c",'X');
+  for(i=0;i<=SZER+1;i++){ //dolna belka{
+      printf("%c",'X');
   }
 }
 void spalanie(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER], char kierunek)
@@ -208,7 +208,7 @@ void start(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER], in
       czysc();
       show_tab(tab2);
       spalanie(tab,tab2,licznik,kierunek);
-      Sleep(100);
+      Sleep(300);
      }while(spr_ogien(tab2)!=1);
 
     czysc();
