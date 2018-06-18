@@ -191,18 +191,27 @@ void spalanie(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER],
 void start(char tab[WYS][SZER], char tab2[WYS][SZER], int licznik[WYS][SZER])
 {
   zerowanie_licz(licznik);
-  int x=0,y=0;
+  int x=0,y=0,flaga=1;
   char kierunek;
   zalesianie(tab); //losowo rozmieszczane drzewa
   show_tab(tab); //plansza
   printf("\nWprowadz kierunek wiatru N,E,S,W lub Z (brak wiatru): "); // N - z Gory na Dol, S - z Dolu w Gore , E - W Lewo , W - w Prawo
   scanf("%s",&kierunek);
-  printf("\n\nWprowadz wspolrzedne podpalenia:");
-  printf("\nX_max 76:");
-  scanf("%d",&x);
-  printf("\nY_max 23:");
-  scanf("%d",&y);
+  do{
+    printf("\n\nWprowadz wspolrzedne podpalenia:");
+    printf("\nX_max 75:");
+    scanf("%d",&x);
+    printf("\nY_max 22:");
+    scanf("%d",&y);
+    if(x>76 || y>23){
+      czysc();
+      show_tab(tab);
+      printf("\nBledne dane!");
+      flaga=0;
 
+    }
+      else break;
+  }while(flaga==0);
   miejsce_podpalenia(tab,y,x);
   tab_cpy(tab,tab2);
 
